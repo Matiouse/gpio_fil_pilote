@@ -1,0 +1,10 @@
+{
+    "domain": "gpio_wire_pilot",
+    "name": "GPIO Fil Pilote",
+    "documentation": "",
+    "issue_tracker": "",
+    "requirements": [],
+    "dependencies": [],
+    "version": "1.0.0",
+    "codeowners": ["@matiouse"]
+  }
