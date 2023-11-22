@@ -6,20 +6,17 @@ from typing import List
 
 import voluptuous as vol
 
-from homeassistant.components.climate import PLATFORM_SCHEMA
-try:
-    from homeassistant.components.climate import ClimateEntity
-except ImportError:
-    from homeassistant.components.climate import ClimateDevice as ClimateEntity
-
+from homeassistant.components.climate import (
+    PLATFORM_SCHEMA,
+    ClimateEntity,
+    ClimateEntityFeature
+)
 from homeassistant.components.climate.const import (
-    SUPPORT_PRESET_MODE,
-    HVAC_MODE_OFF,
-    HVAC_MODE_HEAT,
     PRESET_ECO,
     PRESET_COMFORT,
     PRESET_AWAY,
     PRESET_NONE,
+    HVACMode
 )
 from homeassistant.const import (
     CONF_NAME,
@@ -27,7 +24,8 @@ from homeassistant.const import (
     EVENT_HOMEASSISTANT_START,
     ATTR_ENTITY_ID,
     STATE_UNKNOWN,
-    STATE_UNAVAILABLE,
+    STATE_OFF,
+    STATE_UNAVAILABLE
 )
 from homeassistant.core import callback
 
@@ -69,9 +67,6 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
         vol.Optional(CONF_UNIQUE_ID): cv.string,
     }
 )
-
-SUPPORT_FLAGS = SUPPORT_PRESET_MODE
-
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
     """Set up the wire pilot climate platform."""
@@ -118,15 +113,15 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
             EVENT_HOMEASSISTANT_START, _async_startup)
 
     @property
-    def supported_features(self):
+    def supported_features(self) -> ClimateEntityFeature:
         """Return the list of supported features."""
-        return SUPPORT_FLAGS
+        return ClimateEntityFeature.PRESET_MODE
 
     def update(self):
         """Update unit attributes."""
 
     @property
-    def heater_value(self):
+    def heater_value(self) -> int | None:
         gpiox = int(lc.getline(ROOTFS+"gpio"+self.gpiox_id+"/value",1).strip())
         gpioy = int(lc.getline(ROOTFS+"gpio"+self.gpiox_id+"/value",1).strip())
         gpio = [gpiox,gpioy]
@@ -135,12 +130,12 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
 
     # Presets
     @property
-    def preset_modes(self):
+    def preset_modes(self) -> list[str] | None:
         """List of available preset modes."""
         return [PRESET_COMFORT, PRESET_ECO, PRESET_AWAY]
 
     @property
-    def preset_mode(self):
+    def preset_mode(self) -> str | None:
         value = self.heater_value
 
         if value is None:
@@ -156,7 +151,7 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
         else:
             return STATE_UNKNOWN
 
-    async def async_set_preset_mode(self, preset_mode):
+    async def async_set_preset_mode(self, preset_mode: str) -> None:
         value = VALUE_OFF
 
         if preset_mode == PRESET_AWAY:
@@ -172,31 +167,31 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
     @property
     def hvac_modes(self):
         """List of available operation modes."""
-        return [HVAC_MODE_HEAT, HVAC_MODE_OFF]
+        return [HVACMode.HEAT, HVACMode.OFF]
 
-    async def async_set_hvac_mode(self, hvac_mode):
+    async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         value = VALUE_FROST
 
-        if hvac_mode == HVAC_MODE_HEAT:
+        if hvac_mode == HVACMode.HEAT:
             value = VALUE_COMFORT
-        elif hvac_mode == HVAC_MODE_OFF:
+        elif hvac_mode == HVACMode.OFF:
             value = VALUE_OFF
 
         await self._async_set_heater_value(value)
 
     @property
-    def hvac_mode(self):
+    def hvac_mode(self) -> HVACMode | str | None:
         value = self.heater_value
 
         if value is None:
             return STATE_UNKNOWN
         if value == VALUE_OFF:
-            return HVAC_MODE_OFF
+            return HVACMode.OFF
         else:
-            return HVAC_MODE_HEAT
+            return HVACMode.HEAT
 
     @callback
-    def _async_heater_changed(self, entity_id, old_state, new_state):
+    def _async_heater_changed(self, entity_id, old_state, new_state) -> None:
         if new_state is None:
             return
         self.async_schedule_update_ha_state()
