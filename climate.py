@@ -12,6 +12,7 @@ from homeassistant.components.climate import (
     ClimateEntityFeature
 )
 from homeassistant.components.climate.const import (
+    TEMP_CELSIUS,
     PRESET_ECO,
     PRESET_COMFORT,
     PRESET_AWAY,
@@ -120,6 +121,17 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
     def update(self):
         """Update unit attributes."""
 
+    # Temperature
+    @property
+    def temperature_unit(self) -> str:
+        """Return the unit of measurement."""
+        return TEMP_CELSIUS
+
+    @property
+    def current_temperature(self) -> float | None:
+        """Return the sensor temperature."""
+        return None
+
     @property
     def heater_value(self) -> int | None:
         gpiox = int(lc.getline(ROOTFS+"gpio"+self.gpiox_id+"/value",1).strip())
@@ -165,7 +177,7 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
 
     # Modes
     @property
-    def hvac_modes(self):
+    def hvac_modes(self) -> list[HVACMode]:
         """List of available operation modes."""
         return [HVACMode.HEAT, HVACMode.OFF]
 
