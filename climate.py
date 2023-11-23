@@ -97,11 +97,6 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
         """Run when entity about to be added."""
         await super().async_added_to_hass()
 
-        # Add listener
-        async_track_state_change(
-            self.hass, self.gpiox_id, self.gpioy_id, self._async_heater_changed
-        )
-
         @callback
         def _async_startup(event):
             """Init on startup."""
@@ -148,7 +143,7 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
         value = self.heater_value
 
         if value is None:
-            return STATE_UNKNOWN
+            return None
         if value == VALUE_OFF:
             return PRESET_NONE
         elif value == VALUE_FROST:
@@ -157,9 +152,7 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
             return PRESET_ECO
         elif value == VALUE_COMFORT:
             return PRESET_COMFORT
-        else:
-            return STATE_UNKNOWN
-
+ 
     def async_set_preset_mode(self, preset_mode: str) -> None:
         value = VALUE_OFF
 
@@ -193,19 +186,12 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
         value = self.heater_value
 
         if value is None:
-            return STATE_UNKNOWN
+            return None
         if value == VALUE_OFF:
             return HVACMode.OFF
         else:
             return HVACMode.HEAT
 
-    @callback
-    def _async_heater_changed(self, entity_id, old_state, new_state) -> None:
-        if new_state is None:
-            return
-        self.async_schedule_update_ha_state()
-
-    @callback
     def _async_set_heater_value(self, value):
         """Turn heater toggleable device on."""
         if value is None:
