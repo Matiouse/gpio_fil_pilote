@@ -160,7 +160,7 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
         else:
             return STATE_UNKNOWN
 
-    async def async_set_preset_mode(self, preset_mode: str) -> None:
+    def async_set_preset_mode(self, preset_mode: str) -> None:
         value = VALUE_OFF
 
         if preset_mode == PRESET_AWAY:
@@ -170,7 +170,7 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
         elif preset_mode == PRESET_COMFORT:
             value = VALUE_COMFORT
 
-        await self._async_set_heater_value(value)
+        self._async_set_heater_value(value)
 
     # Modes
     @property
@@ -178,7 +178,7 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
         """List of available operation modes."""
         return [HVACMode.HEAT, HVACMode.OFF]
 
-    async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
+    def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         value = VALUE_FROST
 
         if hvac_mode == HVACMode.HEAT:
@@ -186,7 +186,7 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
         elif hvac_mode == HVACMode.OFF:
             value = VALUE_OFF
 
-        await self._async_set_heater_value(value)
+        self._async_set_heater_value(value)
 
     @property
     def hvac_mode(self) -> HVACMode | str | None:
