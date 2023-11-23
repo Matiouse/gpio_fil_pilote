@@ -197,6 +197,7 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
 
     def _async_set_heater_value(self, value):
         """Turn heater toggleable device on."""
+        _LOGGER.debug('Positionner la valeur à %s',value)
         if value is None:
             return
         else:
