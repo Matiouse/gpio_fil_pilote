@@ -128,6 +128,7 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
     def heater_value(self) -> list[int] | None:
         gpiox = int(lc.getline(ROOTFS+"gpio"+self.gpiox_id+"/value",1).strip())
         gpioy = int(lc.getline(ROOTFS+"gpio"+self.gpioy_id+"/value",1).strip())
+        lc.clearcache()
         gpio = [gpiox,gpioy]
         _LOGGER.debug('GPIOX : %s / GPIOY : %s',gpiox,gpioy)
 
