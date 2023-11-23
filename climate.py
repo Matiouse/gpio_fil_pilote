@@ -12,7 +12,6 @@ from homeassistant.components.climate import (
     ClimateEntityFeature
 )
 from homeassistant.components.climate.const import (
-    TEMP_CELSIUS,
     PRESET_ECO,
     PRESET_COMFORT,
     PRESET_AWAY,
@@ -20,13 +19,11 @@ from homeassistant.components.climate.const import (
     HVACMode
 )
 from homeassistant.const import (
+    TEMP_CELSIUS,
     CONF_NAME,
     CONF_UNIQUE_ID,
     EVENT_HOMEASSISTANT_START,
-    ATTR_ENTITY_ID,
-    STATE_UNKNOWN,
-    STATE_OFF,
-    STATE_UNAVAILABLE
+    STATE_UNKNOWN
 )
 from homeassistant.core import callback
 
