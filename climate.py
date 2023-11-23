@@ -129,6 +129,7 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
         gpiox = int(lc.getline(ROOTFS+"gpio"+self.gpiox_id+"/value",1).strip())
         gpioy = int(lc.getline(ROOTFS+"gpio"+self.gpioy_id+"/value",1).strip())
         gpio = [gpiox,gpioy]
+        _LOGGER.debug('Valueurs de mes GPIOs (heater_value)',str(gpiox)+'/'+str(gpioy))
 
         return gpio
 
@@ -155,6 +156,7 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
  
     def async_set_preset_mode(self, preset_mode: str) -> None:
         value = VALUE_OFF
+        _LOGGER.debug('Valeur de mon preset',value)
 
         if preset_mode == PRESET_AWAY:
             value = VALUE_FROST
@@ -184,6 +186,7 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
     @property
     def hvac_mode(self) -> HVACMode | str | None:
         value = self.heater_value
+        _LOGGER.debug('Valeur de mon hvac',value)
 
         if value is None:
             return None
