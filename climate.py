@@ -155,7 +155,7 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
         elif value == VALUE_COMFORT:
             return PRESET_COMFORT
  
-    def async_set_preset_mode(self, preset_mode: str) -> None:
+    async def async_set_preset_mode(self, preset_mode: str) -> None:
         value = VALUE_OFF
         _LOGGER.debug('Valeur de mon preset %s',value)
 
