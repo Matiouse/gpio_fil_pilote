@@ -166,7 +166,7 @@ class GPIOWirePilotClimate(ClimateEntity, RestoreEntity):
         elif preset_mode == PRESET_COMFORT:
             value = VALUE_COMFORT
 
-        self._async_set_heater_value(value)
+        await self.hass.async_add_executor_job(self._async_set_heater_value, value)
 
     # Modes
     @property
